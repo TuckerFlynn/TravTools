@@ -1,0 +1,37 @@
+﻿extends layout
+
+block script
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js")
+  script(type='text/javascript' src='/javascripts/region_detail.js')
+
+block content
+  div.row
+    div.col-sm-4
+      h1= title
+      p Players with no alliance have been removed from results;
+      p Only the top 5 alliances contribute to region control.
+    div.col-sm-8
+      canvas(id="line-chart" width="800" height="600")
+
+  table.table.table-striped.table-bordered
+    thead.thead-dark
+      tr
+        th Alliance
+        th Population
+        th Villages
+        th Control
+    tbody
+      if (data)
+        each val, index in data
+          tr
+            td= data[index].Alliance
+            td= data[index].Population
+            td= data[index].Villages
+            if (index < 5)
+              td= Math.round(data[index].Population/total*100*100)/100
+            else
+              td --
+      else
+        tr No results provided
+  button.btn.btn-light#getDetails Click for more.
+  hr

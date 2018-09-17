@@ -1,0 +1,11 @@
+﻿extends layout
+
+block script
+  script(type='text/javascript' src='/javascripts/settings.js')
+
+block content
+  h1= title
+  p Adjust your settings here
+  button.btn.btn-primary#getSQL Get Data
+  hr
+  p#output

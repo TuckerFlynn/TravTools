@@ -1,0 +1,42 @@
+doctype html
+html(lang='en')
+  head
+    title= title + ' - TravTools'
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+
+    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous")
+
+    block script
+
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    div.container-fluid
+      div.row
+        ul.nav.nav-tabs
+          li.nav-item 
+            a.nav-link(href='/') Home
+
+          li.nav-item.dropdown
+            a(class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false") Regions
+            div.dropdown-menu
+              a.dropdown-item(href='/regions') Region List
+              a.dropdown-item(href='/regions/history') Region History
+
+          li.nav-item 
+             a.nav-link(href='/travel') Travel Calculator
+
+          li.nav-item
+             a.nav-link(href='/inactive') Inactive Finder
+
+          li.nav-item 
+             a.nav-link(href='/settings') Settings
+      
+      block content
+
+      div.row#details
+        p#output
+
+  script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous")
+  script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous")

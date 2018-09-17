@@ -1,0 +1,27 @@
+﻿extends layout
+
+block content
+  div.row
+    div.col-sm-12
+      h1= title
+      p Choose a region to see additional information.
+      table.table.table-striped.table-bordered
+        tbody
+          if (data)
+            - for (var i = 0; i < data.length; i += 4)
+              tr
+                td
+                  a(class="btn btn-light" href='/region/' + data[i].Region) #{data[i].Region}
+                if (data[i+1])
+                  td
+                    a(class="btn btn-light" href='/region/' + data[i+1].Region) #{data[i+1].Region}
+                if (data[i+2])
+                  td
+                    a(class="btn btn-light" href='/region/' + data[i+2].Region) #{data[i+2].Region}
+                if (data[i+3])
+                  td
+                    a(class="btn btn-light" href='/region/' + data[i+3].Region) #{data[i+3].Region}
+                else
+                  td 
+          else
+            tr No results provided
