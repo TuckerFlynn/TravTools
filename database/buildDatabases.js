@@ -1,5 +1,7 @@
-﻿// CHANGE THIS URL TO THE SERVER YOU'RE PLAYING
-var URL = 'https://ts19.travian.us/map.sql';
+﻿#!/usr/bin/env node
+
+// CHANGE THIS URL TO THE SERVER YOU'RE PLAYING
+var URL = 'https://ts19.english.travian.com/map.sql';
 
 var fs = require('fs')
 var readline = require('readline');
@@ -23,14 +25,14 @@ var startHere = function () {
     var dateString = "m" + today.getFullYear() + "_" + today.getMonth() + "_" + today.getDate();
 
     // Check if the directory of the current date already exists
-    fs.access('./database/mapFiles/' + dateString, (err) => {
+    fs.access('/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/mapFiles/' + dateString, (err) => {
         if (!err) {
             // If it exists, end the function
-            console.log('\x1b[41m' + dateString + ' directory already exists.\x1b[0m');
+//            console.log('\x1b[41m' + dateString + ' directory already exists.\x1b[0m');
             partialUpdate();
         } else {
 			// If it doesn't exist, run through the update function
-            console.log('\x1b[32m Running master update. \x1b[0m');
+//            console.log('\x1b[32mRunning master update. \x1b[0m');
             updateAllData();
         }
 	});
@@ -51,12 +53,12 @@ var updateAllData = function () {
 
             var options = {
                 urls : [URL],
-                directory: './database/mapFiles/' + dateString,
+                directory: '/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/mapFiles/' + dateString,
                 defaultFilename: 'map.txt'
             };
             // After successfully downloading, redirect to home page
             scrape(options, (error, result) => {
-                console.log('Succesfully scraped webpage, saved file: ' + dateString)
+//                console.log('Succesfully scraped webpage, saved file: ' + dateString)
                 callback(null, 'One')
             });
 		},
@@ -65,7 +67,7 @@ var updateAllData = function () {
 			// Second: open and read today's map file line-by-line, saving lines as array
 
             const rl = readline.createInterface({
-                input: fs.createReadStream('./database/mapFiles/' + dateString + '/map.txt')
+                input: fs.createReadStream('/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/mapFiles/' + dateString + '/map.txt')
             });
          
             rl.on('line', function (line) {
@@ -74,7 +76,7 @@ var updateAllData = function () {
             });
             // Close event is recieved at the end of ReadStream input
             rl.on('close', function () {
-                console.log('Line reader has recieved a "close" event');
+//                console.log('Line reader has recieved a "close" event');
                 // Callback instructs async.series to move onto the next function
                 callback(null, 'Two');
             });
@@ -119,7 +121,7 @@ var updateAllData = function () {
                 sql = 'SELECT DISTINCT Region FROM ' + dateString;
                 db.each(sql, function (err, row) {
                     if (err) {
-                        console.log(err);
+//                        console.log(err);
                     } else {
                         var line = row.Region;
 
@@ -136,9 +138,17 @@ var updateAllData = function () {
 
                 db.close(function (err, call) {
                     if (err) {
-                        console.log('Error closing db: ' + err);
+//                        console.log('Error closing db: ' + err);
                     }
-                    console.log('Finished creating current database.')
+//					console.log('Finished creating current database.');
+
+                    // Log success message to a permanent log file
+                    var log = 'Successfully created database ' + dateString + ' at ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds() + "\n";
+                    fs.appendFile('database/log.txt', log, (err) => {
+                        if (err) throw err;
+//                        console.log('The "data to append" was appended to file!');
+                    });
+
                     callback(null, 'Three')
                 });
             });
@@ -191,20 +201,20 @@ var updateAllData = function () {
                     });
 				}
 
-				sql = 'SELECT * FROM Aquileia';
-                db.each(sql, function (err, row) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log(row);
-                    }
-                });            
+				// sql = 'SELECT * FROM Aquileia';
+                // db.each(sql, function (err, row) {
+                //     if (err) {
+                //         console.log(err);
+                //     } else {
+                //         console.log(row);
+                //     }
+                // });            
 
                 db.close(function (err, call) {
                     if (err) {
                         console.log('Error closing db: ' + err);
                     }
-                    console.log('Finished updating regionHistory database.')
+//                    console.log('Finished updating regionHistory database.')
                     callback(null, 'Four')
                 });
 		    });
@@ -214,7 +224,7 @@ var updateAllData = function () {
 	function(err, results) {
 		if (!err) {
             // results is now equal to ['One', 'Two', 'Three', 'Four']
-			console.log('All functions have run succesfully');
+//			console.log('All functions have run succesfully');
         }
     });
 }
@@ -224,7 +234,7 @@ var partialUpdate = function () {
     var today = new Date();
     var dateString = "m" + today.getFullYear() + "_" + today.getMonth() + "_" + today.getDate();
 
-	console.log('\x1b[32m Running partial update. \x1b[0m');
+//	console.log('\x1b[32mRunning partial update. \x1b[0m');
 
 	var data = [];
     var regionList = [];
@@ -233,7 +243,7 @@ var partialUpdate = function () {
 	    function (callback) {
             // Second: open and read today's map file line-by-line, saving lines as array         
             const rl = readline.createInterface({
-                input: fs.createReadStream('./database/mapFiles/' + dateString + '/map.txt')
+                input: fs.createReadStream('/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/mapFiles/' + dateString + '/map.txt')
             });
          
             rl.on('line', function (line) {
@@ -242,14 +252,14 @@ var partialUpdate = function () {
             });
             // Close event is recieved at the end of ReadStream input
             rl.on('close', function () {
-                console.log('Line reader has recieved a "close" event');
+//                console.log('Line reader has recieved a "close" event');
                 // Callback instructs async.series to move onto the next function
                 callback(null, 'Two');
             });
         },
         function(callback) {
             // Third: create the SQLite database from today's map file         
-            var db = new sqlite3.Database('./database/db/' + dateString + '.db')         
+            var db = new sqlite3.Database('/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/db/' + dateString + '.db')         
             // db.serialize allows only one sql statement to run at a time 
             // ... prevents trying to query a table that doesn't exist yet, etc.
             db.serialize( function () {
@@ -263,7 +273,7 @@ var partialUpdate = function () {
                 sql = 'ALTER TABLE ' + dateString + ' ADD COLUMN Region TEXT'
                 db.run(sql);            
                 // Connect to regions database
-                sql = "ATTACH DATABASE './database/db/regions.db' AS Regions"
+                sql = "ATTACH DATABASE '/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/db/regions.db' AS Regions"
                 db.run(sql);            
                 // Update map database to include region names
                 sql = 'UPDATE ' + dateString + ' SET Region = (SELECT Regions.regionsSQL.Region FROM Regions.regionsSQL WHERE (' + dateString + '.ID = Regions.regionsSQL.ID))'
@@ -272,7 +282,7 @@ var partialUpdate = function () {
                 sql = 'SELECT DISTINCT Region FROM ' + dateString;
                 db.each(sql, function (err, row) {
                     if (err) {
-                        console.log(err);
+//                        console.log(err);
                     } else {
                         var line = row.Region;
 
@@ -289,9 +299,17 @@ var partialUpdate = function () {
                 // Close database connection
                 db.close(function (err, call) {
                     if (err) {
-                        console.log('Error closing db: ' + err);
-                    }
-                    console.log('Finished creating current database.')
+//                        console.log('Error closing db: ' + err);
+					}
+
+                    // Log success message to a permanent log file
+                    var log = 'Successfully created database ' + dateString + ' at ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds() + "\n";
+                    fs.appendFile('/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/log.txt', log, (err) => {
+                        if (err) throw err;
+//                        console.log('The "data to append" was appended to file!');
+                    });
+
+//                    console.log('Finished creating current database.')
                     callback(null, 'Three')
                 });
             });
@@ -299,10 +317,10 @@ var partialUpdate = function () {
         function(callback) {         
             // Fourth: create and/or update the regions history database         
             // 1. Open database regionHistory.db
-            var db = new sqlite3.Database('./database/db/regionHistory.db');         
+            var db = new sqlite3.Database('/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/db/regionHistory.db');         
             db.serialize( function() {
                 // 2. Connect to current map database
-                var sql = "ATTACH DATABASE './database/db/" + dateString + ".db' AS map";
+                var sql = "ATTACH DATABASE '/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/db/" + dateString + ".db' AS map";
                 db.run(sql);            
                 // 3. Loop through all regions
                 for (var i = 0; i < regionList.length; i++) {
@@ -326,20 +344,20 @@ var partialUpdate = function () {
                     });
                 }
 
-                sql = 'SELECT * FROM Aquileia';
-                db.each(sql, function (err, row) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log(row);
-                    }
-                });            
+                // sql = 'SELECT * FROM Aquileia';
+                // db.each(sql, function (err, row) {
+                //     if (err) {
+                //         console.log(err);
+                //     } else {
+                //         console.log(row);
+                //     }
+                // });            
 
                 db.close(function (err, call) {
                     if (err) {
-                        console.log('Error closing db: ' + err);
+//                        console.log('Error closing db: ' + err);
                     }
-                    console.log('Finished updating regionHistory database.')
+//                    console.log('Finished updating regionHistory database.')
                     callback(null, 'Four')
                 });
             });
@@ -349,7 +367,7 @@ var partialUpdate = function () {
 	function(err, results) {
         if (!err) {
             // results is now equal to ['Two', 'Three', 'Four']
-            console.log('\x1b[42m All functions have run succesfully for ' + dateString + '\x1b[0m');
+//            console.log('\x1b[42mAll functions have run succesfully for ' + dateString + '\x1b[0m');
         }
     });
 }
