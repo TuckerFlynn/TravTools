@@ -8113,5 +8113,6 @@
     <None Include="views\travel.pug" />
     <None Include=".DS_Store" />
     <None Include="database\log.txt" />
+    <None Include="views\regions_activity.pug" />
   </ItemGroup>
 </Project>

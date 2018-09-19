@@ -1,4 +1,7 @@
-﻿var regionHistory = function () {
+﻿// Edit this to reflect current server
+var server = "https://ts19.english.travian.com";
+
+var regionHistory = function () {
 	var canvas = document.getElementById("line-chart");
     var dataset = [], points = [];
 
@@ -110,7 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
 					for (var i = 0; i < res.length; i++) {
 						text += "<tr>";
 						text += "<td>" + res[i].Alliance + "</td>";
-						text += "<td>" + res[i].Player + "</td>";
+
+						text += "<td><a href=" + server + "/spieler.php?uid=" + res[i].uID + " target='_blank'>" + res[i].Player + "</a></td>";
+
 						text += "<td>(" + res[i].X + "|" + res[i].Y + ")</td>";
                         text += "<td>" + res[i].Village + "</td>";
                         text += "<td>" + res[i].Population + "</td></tr>";

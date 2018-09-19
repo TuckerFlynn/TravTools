@@ -1,0 +1,30 @@
+﻿extends layout
+
+block script
+
+block content
+  div.row
+    div.col-sm-12
+      h1= title
+      hr
+  div.row
+    div.col-sm-12
+      p Breakdown of changes to region population and control
+
+  table.table.table-striped.table-bordered
+    thead.thead-dark
+      tr
+        th Region
+        th 7 Days
+        th Yesterday
+        th Current
+    tbody
+      if (data)
+        each val, index in data
+          tr
+            td= data[index].Region
+            td= data[index].Week
+            td= data[index].Previous
+            td= data[index].Current
+      else
+        tr No results provided
