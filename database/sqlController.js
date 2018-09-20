@@ -386,21 +386,21 @@ exports.regions_activity_get = function(req, res)
                     }
 				});
 
-				sql = "UPDATE temp SET Current = (SELECT SUM(History." + regions[i] + "." + dateString + ") FROM History." + regions[i] + ") WHERE (temp.Region = '" + regions[i] + "')";
+				sql = "UPDATE temp SET Current = (SELECT SUM(History." + regions[i] + "." + dateString + ") FROM History." + regions[i] + " ORDER BY History." + regions[i] + "." + dateString + " DESC LIMIT 5) WHERE (temp.Region = '" + regions[i] + "')";
                 db2.run(sql, function (err) {
                     if (err) {
                         console.log(" UPDATE 1 ERROR: " + err);
                     }
 				});
 
-                sql = "UPDATE temp SET Previous = (SELECT SUM(History." + regions[i] + "." + prevDateString + ") FROM History." + regions[i] + ") WHERE (temp.Region = '" + regions[i] + "')";
+                sql = "UPDATE temp SET Previous = (SELECT SUM(History." + regions[i] + "." + prevDateString + ") FROM History." + regions[i] + " ORDER BY History." + regions[i] + "." + prevDateString + " DESC LIMIT 5) WHERE (temp.Region = '" + regions[i] + "')";
                 db2.run(sql, function (err) {
                     if (err) {
                         console.log(" UPDATE 2 ERROR: " + err);
                     }
 				}); 
 
-                sql = "UPDATE temp SET Week = (SELECT SUM(History." + regions[i] + "." + weekDateString + ") FROM History." + regions[i] + ") WHERE (temp.Region = '" + regions[i] + "')";
+                sql = "UPDATE temp SET Week = (SELECT SUM(History." + regions[i] + "." + weekDateString + ") FROM History." + regions[i] + " ORDER BY History." + regions[i] + "." + weekDateString + " DESC LIMIT 5) WHERE (temp.Region = '" + regions[i] + "')";
                 db2.run(sql, function (err) {
                     if (err) {
                         console.log(" UPDATE 3 ERROR: " + err);
