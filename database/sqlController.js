@@ -78,8 +78,7 @@ exports.regions_overview_get = function (req, res)
 
 exports.region_id_get = function (req, res, next) 
 	{
-    var today = new Date();
-    var dateString = "m" + today.getFullYear() + "_" + today.getMonth() + "_" + today.getDate();
+    var dateString = getDateString();
 	var path = './database/db/' + dateString + '.db';
 
 	var regionName = req.params.id;
@@ -136,7 +135,8 @@ exports.region_id_get = function (req, res, next)
                 });
             });
         } else {
-            console.log('Current db not found at: ' + path);
+			console.log('Current db not found at: ' + path);
+
             res.render('region_detail', { title: req.params.id, data: null, total: 0, data2: null});
 		}
     });
