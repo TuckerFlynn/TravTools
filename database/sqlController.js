@@ -374,7 +374,7 @@ exports.regions_activity_get = function(req, res)
 			var sql = "ATTACH DATABASE './database/db/regionHistory.db' AS History";
 			db2.run(sql);
 
-			sql = "CREATE TABLE temp(Region TEXT UNIQUE, Week INTEGER, Yesterday INTEGER, Current INTEGER)";
+			sql = "CREATE TABLE temp(Region TEXT UNIQUE, Week INTEGER, Yesterday INTEGER, Current INTEGER, Leader TEXT, PrevLeader TEXT)";
             db2.run(sql);
 
             // Add region names and population sums to temp table
@@ -404,6 +404,20 @@ exports.regions_activity_get = function(req, res)
                 db2.run(sql, function (err) {
                     if (err) {
                         console.log(" UPDATE 3 ERROR: " + err);
+                    }
+				});
+
+                sql = "UPDATE temp SET Leader = (SELECT History." + regions[i] + ".Alliance FROM History." + regions[i] + " ORDER BY History." + regions[i] + "." + dateString + " DESC LIMIT 1) WHERE (temp.Region = '" + regions[i] + "')";
+                db2.run(sql, function (err) {
+                    if (err) {
+                        console.log(" UPDATE 4 ERROR: " + err);
+                    }
+				});
+
+                sql = "UPDATE temp SET Leader = (SELECT History." + regions[i] + ".Alliance FROM History." + regions[i] + " ORDER BY History." + regions[i] + "." + weekDateString + " DESC LIMIT 1) WHERE (temp.Region = '" + regions[i] + "')";
+                db2.run(sql, function (err) {
+                    if (err) {
+                        console.log(" UPDATE 5 ERROR: " + err);
                     }
                 });
 			}

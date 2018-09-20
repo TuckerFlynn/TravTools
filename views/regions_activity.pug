@@ -15,16 +15,21 @@ block content
     thead.thead-dark
       tr
         th Region
-        th 7 Days
+        th Leader (1 week)
+        th 1 Week
         th Yesterday
         th Current
+        th Leader (Current)
     tbody
       if (data)
         each val, index in data
           tr
-            td= data[index].Region
+            td
+              a(href="../region/" + data[index].Region) #{data[index].Region}
+            td
             td= data[index].Week
             td= data[index].Previous
             td= data[index].Current
+            td= data[index].Leader
       else
         tr No results provided
