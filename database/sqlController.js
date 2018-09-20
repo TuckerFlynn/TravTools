@@ -374,7 +374,7 @@ exports.regions_activity_get = function(req, res)
 			var sql = "ATTACH DATABASE './database/db/regionHistory.db' AS History";
 			db2.run(sql);
 
-			sql = "CREATE TABLE temp(Region TEXT UNIQUE, Week INTEGER, Yesterday INTEGER, Current INTEGER, Leader TEXT, PrevLeader TEXT)";
+			sql = "CREATE TABLE temp(Region TEXT UNIQUE, Week INTEGER, Previous INTEGER, Current INTEGER, Leader TEXT, PrevLeader TEXT)";
             db2.run(sql);
 
             // Add region names and population sums to temp table
