@@ -26,7 +26,7 @@ block content
           tr
             td
               a(href="../region/" + data[index].Region) #{data[index].Region}
-            td
+            td= data[index].PrevLeader
             td= data[index].Week
             td= data[index].Previous
             td= data[index].Current
