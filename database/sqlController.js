@@ -11,7 +11,8 @@ function getDateString (choice) {
         var month = today.getMonth();
         var day = today.getDate();
 		var daysInPrevMonth = 0;
-        var history = 0;
+		var history = 0;
+
         //need to count back 7 days to generate file name
         //if it's near the beginning of the month you need to know how many days the previous month had
         if (month == 0 || month == 1 || month == 3 || month == 5 || month == 8 || month == 10) {
@@ -39,16 +40,48 @@ function getDateString (choice) {
         var dateString = "m" + year + "_" + month + "_" + day;
 		return dateString;
     // Generate the dateString for the current date
-	} else {
+    } else if (choice == 'today') {
 		var dateString = "m" + today.getFullYear() + "_" + today.getMonth() + "_" + today.getDate();
+		var path = './database/db/' + dateString + '.db';
+
         return dateString;
+
+		// fs.access(path, (err) => {
+			// if (!err) {
+			// 	console.log("Today's database exists.");
+			// 	var dateString = "m" + today.getFullYear() + "_" + today.getMonth() + "_" + today.getDate();
+   //              console.log(dateString);
+   //              return dateString;
+			// } else {
+    //             console.log("Falling back on yesterday's database.");
+				// history = 1;
+     //            if (month == 0 || month == 1 || month == 3 || month == 5 || month == 8 || month == 10) {
+     //                daysInPrevMonth = 31;
+     //            } else if (month == 2) {
+     //                daysInPrevMonth = 28;   //february
+     //            } else {
+     //                daysInPrevMonth = 30;
+     //            }
+     //            if (day <= history) {
+     //                month = month - 1;
+     //                day = daysInPrevMonth - (history - day);
+     //            } else {
+     //                day = day - history;
+     //            }
+     //            if (month == -1) {
+     //                month = 11;
+     //                year = year - 1;
+     //            }
+     //            var dateString = "m" + year + "_" + month + "_" + day;
+     //            return dateString;
+		   //  }
+	    // });
 	}
 }
 
 exports.regions_overview_get = function (req, res) 
 	{
-	var today = new Date();
-	var dateString = "m" + today.getFullYear() + "_" + today.getMonth() + "_" + today.getDate();
+	var dateString = getDateString('today');
     var path = './database/db/' + dateString + '.db';
 
     // Open the regions database to get the list of region names to display
@@ -78,7 +111,7 @@ exports.regions_overview_get = function (req, res)
 
 exports.region_id_get = function (req, res, next) 
 	{
-    var dateString = getDateString();
+    var dateString = getDateString('today');
 	var path = './database/db/' + dateString + '.db';
 
 	var regionName = req.params.id;
@@ -144,8 +177,7 @@ exports.region_id_get = function (req, res, next)
 
 exports.regions_detail_get = function (req, res) 
 	{
-    var today = new Date();
-    var dateString = "m" + today.getFullYear() + "_" + today.getMonth() + "_" + today.getDate();
+    var dateString = getDateString('today')
 	var path = './database/db/' + dateString + '.db';
 
     var regionName = req.params.id;
@@ -221,8 +253,7 @@ exports.regions_graph_get = function (req, res)
 
 exports.regions_history_get = function (req, res) 
 	{
-    var today = new Date();
-    var dateString = "m" + today.getFullYear() + "_" + today.getMonth() + "_" + today.getDate();
+    var dateString = getDateString('today');
     var path = './database/db/' + dateString + '.db';
 
 	var sqlOutput = [];
@@ -335,7 +366,7 @@ exports.regions_activity_get = function(req, res)
 	{
 	var sqlOutput = [], regions = [];
 
-	var dateString = getDateString();
+	var dateString = getDateString('today');
 	var prevDateString = getDateString('previous');
 	var weekDateString = getDateString('week');
 
