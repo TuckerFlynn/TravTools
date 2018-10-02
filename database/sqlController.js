@@ -445,7 +445,7 @@ exports.regions_activity_get = function(req, res)
                     }
 				});
 
-                sql = "UPDATE temp SET Leader = (SELECT History." + regions[i] + ".Alliance FROM History." + regions[i] + " ORDER BY History." + regions[i] + "." + weekDateString + " DESC LIMIT 1) WHERE (temp.Region = '" + regions[i] + "')";
+                sql = "UPDATE temp SET PrevLeader = (SELECT History." + regions[i] + ".Alliance FROM History." + regions[i] + " ORDER BY History." + regions[i] + "." + weekDateString + " DESC LIMIT 1) WHERE (temp.Region = '" + regions[i] + "')";
                 db2.run(sql, function (err) {
                     if (err) {
                         console.log(" UPDATE 5 ERROR: " + err);
