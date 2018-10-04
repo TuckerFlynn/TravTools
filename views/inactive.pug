@@ -20,7 +20,7 @@ block content
           td 
             label(for='radius') Search Radius:
           td
-           input#radius(type='text' name='radius' value=50)
+           input#radius(type='text' name='radius' value=20)
           td
         tr
           td 
@@ -44,5 +44,23 @@ block content
   div.row
     div.col-sm-12
       if (output)
-        p= output
+        table.table.table-striped.table-bordered
+          thead.thead-dark
+            tr
+              th Player
+              th Alliance
+              th Village
+              th Village Population
+              th Change
+              th Distance
+          tbody
+            each val, index in output
+              tr
+                td= output[index].Player
+                td= output[index].Alliance
+                td
+                  a(href= output[index].Url target='_blank') #{output[index].Village}
+                td= output[index].Current
+                td= output[index].Change
+                td= output[index].Distance
       

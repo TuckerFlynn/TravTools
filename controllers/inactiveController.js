@@ -37,20 +37,32 @@ function getDateString (history) {
 	return dateString;
 }
 
+//get true distance between two points
+function findDist (x1, x2, y1, y2) {
+    //get absolute x and y distances, use them to find travel distance
+    var xDist = Math.abs(x1 - x2);
+    var yDist = Math.abs(y1 - y2);
+    //exact distance
+    var distance = Math.hypot(xDist, yDist);
+    // distance rounded to one decimal
+	var distRound = parseFloat( distance.toFixed(1) );
+    return distRound;
+}
+
 exports.inactive_get = function (req, res) {
     res.render('inactive', { title: 'Inactive Finder' });
 }
 
 exports.inactive_post = function (req, res) {   
 	var body = req.body;
-    console.log(body);
+    var dateString = getDateString(0);
+    var prevDateString = getDateString(body.days);
 
-	var sqlOutput = [];
+	console.log(body);
+	console.log(dateString);
+    console.log(prevDateString);
 
-	var dateString = getDateString(0);
-	var prevDateString = getDateString(body.days);
-
-	// console.log(body);
+	var sqlOutput = [];   
 
 	var db = new sqlite3.Database('');
 
@@ -59,58 +71,122 @@ exports.inactive_post = function (req, res) {
 		var sql = "ATTACH DATABASE './database/db/" + dateString + ".db' AS Current";
 		db.run(sql);
 		sql = "ATTACH DATABASE './database/db/" + prevDateString + ".db' AS Previous";
+		db.run(sql);
+
+		sql = `SELECT * FROM Current.${dateString} WHERE aID = 2`;
+        db.each(sql, function(err, row) { 
+         if (err) 
+         console.log(err) 
+         else 
+         console.log(row) 
+        });      
+
+		// Create Inactives table that has uID, Current total pop, Previous total pop, 
+		// and then removes players with change larger than posted request
+		sql = `CREATE TABLE Inactives AS SELECT
+		    Current.${dateString}.uID AS uID,
+		    SUM(Current.${dateString}.Population) AS CurrentSum
+            FROM Current.${dateString}
+			GROUP BY Current.${dateString}.uID
+			`;
+		db.run(sql);
+
+		sql = `ALTER TABLE Inactives ADD COLUMN PrevSum INTEGER`;
+		db.run(sql);
+
+		sql = `UPDATE Inactives SET PrevSum = (
+    		SELECT SUM(Previous.${prevDateString}.Population) 
+    		FROM Previous.${prevDateString}
+		    WHERE(Previous.${prevDateString}.uID = Inactives.uID)
+			)`;
         db.run(sql);
 
-        // Create table of total player pop (current)
-		sql = "CREATE TABLE CurrentSum(uID INTEGER, Current INTEGER)";
-		db.run(sql);      
-		sql = "INSERT INTO CurrentSum SELECT uID, SUM(Population) FROM Current." + dateString + " GROUP BY uID";
+		sql = `DELETE FROM Inactives
+    		WHERE CurrentSum - PrevSum > ${body.popChange}
+    		`;
 		db.run(sql);
-		sql = "DELETE FROM CurrentSum WHERE uID=1 OR uID=2 OR uID=4 OR uID=5 OR uID=6";
-        db.run(sql);
-        
-        // Create table of total player pop (previous)
-        sql = "CREATE TABLE PrevSum(uID INTEGER, Previous INTEGER)";
-        db.run(sql);      
-        sql = "INSERT INTO PrevSum SELECT uID, SUM(Population) FROM Previous." + prevDateString + " GROUP BY uID";
+
+		// sql = `SELECT * FROM Inactives`;
+		// db.each(sql, function(err, row) { 
+		// 	if (err) 
+		// 	console.log(err) 
+		// 	else 
+		// 	console.log(row) 
+		// });
+
+		// Create Villages table contianing all villages within search radius, 
+		// then remove players not in the Inactives table
+		sql = `CREATE TABLE Villages AS SELECT 
+		    Current.${dateString}.uID AS uID, 
+		    Current.${dateString}.Player AS Player, 
+			Current.${dateString}.Alliance AS Alliance,
+            Current.${dateString}.Village AS Village,
+			Current.${dateString}.X AS X,
+            Current.${dateString}.Y AS Y,
+			Current.${dateString}.Population AS Current,
+			Current.${dateString}.Population - Previous.${prevDateString}.Population AS Change 
+			FROM Current.${dateString} INNER JOIN Previous.${prevDateString}
+			ON Current.${dateString}.vID = Previous.${prevDateString}.vID
+			WHERE ABS(Current.${dateString}.X - ${body.xStart}) < ${body.radius} 
+			AND ABS(Current.${dateString}.Y - ${body.yStart} < ${body.radius})
+			`;
 		db.run(sql);
-        sql = "DELETE FROM PrevSum WHERE uID=1 OR uID=2 OR uID=4 OR uID=5 OR uID=6";
+
+		sql = `DELETE FROM Villages 
+    		WHERE uID=1 OR uID=2 OR uID=4 OR uID=5 OR uID=6
+    		`;
         db.run(sql);
 
-		sql = "CREATE TABLE Change(uID INTEGER, Change INTEGER)";
-		db.run(sql);
-		sql = "INSERT INTO Change SELECT CurrentSum.Current - PrevSum.Previous AS Change, CurrentSum.uID FROM (CurrentSum INNER JOIN PrevSum ON CurrentSum.uID = PrevSum.uID) WHERE (CurrentSum.Current - PrevSum.Previous > " + body.popChange + ")";
-        db.run(sql);
-        sql = "DELETE FROM Change WHERE uID=1 OR uID=2 OR uID=4 OR uID=5 OR uID=6";
-        db.run(sql);
+		// sql = "SELECT * FROM Villages LIMIT 30";
+        // db.each(sql, function (err, row) {
+        //     if (err) {
+        //         console.log(err);
+        //     } else {            
+        //         console.log(row);
+        //     }
+        // });
 
-        sql = "SELECT * FROM CurrentSum ORDER BY uID LIMIT 10";
+
+		sql = `DELETE FROM Villages
+    		WHERE NOT EXISTS ( SELECT uID FROM Inactives WHERE uID = Villages.uID )
+			`;
+		db.run(sql);
+
+		// sql = 'SELECT changes()';
+        // db.all(sql, function (err, rows) {
+        //     if (err) {
+        //         console.log(err);
+        //     } else {
+        //         console.log(rows);
+        //     }
+        // });
+
+		// sql = `ALTER TABLE Villages ADD COLUMN Distance INTEGER`;
+		// db.run(sql);
+		// sql = `ALTER TABLE Villages ADD COLUMN Url TEXT`;
+        // db.run(sql);
+
+		sql = "SELECT * FROM Villages";
         db.each(sql, function (err, row) {
             if (err) {
                 console.log(err);
-            } else {
-                console.log(row)
-            }
-        });
+			} else {
+				row.Distance = findDist(body.xStart, row.X, body.yStart, row.Y);
+                // Map link format: https://ts19.english.travian.com/position_details.php?x=-38&y=-3
+				row.Url = 'https://ts19.english.travian.com/position_details.php?x=' + row.X + '&y=' + row.Y;
 
-        sql = "SELECT * FROM PrevSum ORDER BY uID LIMIT 10";
-        db.each(sql, function (err, row) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(row)
+				// console.log(row);
+                sqlOutput.push(row);
             }
 		});
 
-        sql = "SELECT * FROM Change ORDER BY uID LIMIT 10";
-        db.each(sql, function (err, row) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(row)
+        db.close(function (err) {
+			if (!err) {
+				sqlOutput.sort(function(a,b) {
+                    return a.Distance-b.Distance;
+				});
+                res.render('inactive', { title: 'Inactive Finder', output: sqlOutput });
             }
         });
     });
-
-    res.render('inactive', { title: 'Inactive Finder', output: sqlOutput });
 }
