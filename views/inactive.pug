@@ -1,5 +1,48 @@
 ﻿extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div.row
+    div.col-sm-12
+      h1= title
+      p Welcome to the n00b finder.
+      hr
+  form#inactiveInput(action='/inactive' method='post')
+    table.table.table-striped.table-bordered
+      tbody
+        tr
+          td 
+            label(for='xStart') Search Origin:
+          td x:
+            input#xStart(type='text' name='xStart')
+          td y:
+            input#yStart(type='text' name='yStart')
+        tr
+          td 
+            label(for='radius') Search Radius:
+          td
+           input#radius(type='text' name='radius' value=50)
+          td
+        tr
+          td 
+            label(for='popChange') Max. Population Change:
+          td
+            input#popChange(type='text' name='popChange' value=2)
+          td
+        tr
+          td 
+            label(for='days') Over No. of Days:
+          td 
+            input#days(type='text' name='days' value=4)
+          td
+        tr
+          td
+            button#submit.btn.btn-primary Search!
+          td
+          td
+            button#clear.btn.btn-secondary Clear.
+       
+  div.row
+    div.col-sm-12
+      if (output)
+        p= output
+      

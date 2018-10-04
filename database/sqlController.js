@@ -222,7 +222,8 @@ exports.regions_detail_get = function (req, res)
 
 exports.regions_graph_get = function (req, res) 
 	{
-    var sqlOutput = [];
+	var sqlOutput = [];
+    var dateString = getDateString('today');
 
     var regionName = req.params.id;
     if (regionName[0] == ' ') {
@@ -234,7 +235,7 @@ exports.regions_graph_get = function (req, res)
 	var db = new sqlite3.Database('./database/db/regionHistory.db');
 
 	db.serialize(function () {
-		var sql = 'SELECT * FROM ' + regionName;
+		var sql = 'SELECT * FROM ' + regionName + ' ORDER BY ' + regionName + '.' + dateString + ' DESC LIMIT 5';
         db.all(sql, function (err, rows) {
             if (err) {
                 console.log(err);
