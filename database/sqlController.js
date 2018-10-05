@@ -129,15 +129,19 @@ exports.region_id_get = function (req, res, next)
 
             var db = new sqlite3.Database('./database/db/' + dateString + '.db');
     
-            db.serialize(function () {
+			db.serialize(function () {
+				// Create a new table to hold player information of all players that are in an alliance
+				var sql = `CREATE TABLE IF NOT EXISTS aPlayers AS SELECT * FROM ${dateString}`;
+				db.run(sql);
+
                 // Remove natars, etc.
-                sql = "DELETE FROM " + dateString + " WHERE uID=1 OR uID=2 OR uID=4 OR uID=5 OR uID=6 OR aID=0";
+                sql = `DELETE FROM aPlayers WHERE uID=1 OR uID=2 OR uID=4 OR uID=5 OR uID=6 OR aID=0`;
                 db.run(sql);
                 // Connect to regions database
                 sql = "ATTACH DATABASE './database/db/regions.db' AS Regions";
 				db.run(sql);
 
-                sql = "SELECT Region, Alliance, SUM(Population) AS Population, COUNT(vID) AS Villages FROM " + dateString + " WHERE Region LIKE '%" + regionName + "%' GROUP BY Alliance ORDER BY SUM(Population) DESC";
+                sql = "SELECT Region, Alliance, SUM(Population) AS Population, COUNT(vID) AS Villages FROM aPlayers WHERE Region LIKE '%" + regionName + "%' GROUP BY Alliance ORDER BY SUM(Population) DESC";
                 db.each(sql, function (err, row) {
                     if (err) {
                         console.log(err);
@@ -147,7 +151,7 @@ exports.region_id_get = function (req, res, next)
                 });
 
                 // Get the detailed player info for the region, but do not display by default
-                sql = "SELECT Alliance, Player, X, Y, Population FROM " + dateString + " WHERE Region LIKE '%" + regionName + "%' ORDER BY Alliance ASC, Population DESC";
+                sql = "SELECT Alliance, Player, X, Y, Population FROM aPlayers WHERE Region LIKE '%" + regionName + "%' ORDER BY Alliance ASC, Population DESC";
                 db.each(sql, function (err, row) {
                     if (err) {
                         console.log(err);
@@ -192,13 +196,13 @@ exports.regions_detail_get = function (req, res)
     
             db.serialize(function () {
                 // Remove natars, etc.
-                sql = "DELETE FROM " + dateString + " WHERE uID=1 OR uID=2 OR uID=4 OR uID=5 OR uID=6 OR aID=0";
-                db.run(sql);
+                // sql = "DELETE FROM " + dateString + " WHERE uID=1 OR uID=2 OR uID=4 OR uID=5 OR uID=6 OR aID=0";
+                // db.run(sql);
                 // Connect to regions database
                 sql = "ATTACH DATABASE './database/db/regions.db' AS Regions";
                 db.run(sql);
                 // Get the detailed player info for the region, but do not display by default
-                sql = "SELECT Alliance, uID, Player, X, Y, Village, Population FROM (" + dateString + " LEFT JOIN Regions.regionsSQL ON " + dateString + ".ID = Regions.regionsSQL.ID) WHERE Regions.regionsSQL.Region LIKE '%" + regionName + "%' ORDER BY Alliance ASC, Player ASC, Population DESC";
+                sql = "SELECT Alliance, uID, Player, X, Y, Village, Population FROM (aPlayers LEFT JOIN Regions.regionsSQL ON aPlayers.ID = Regions.regionsSQL.ID) WHERE Regions.regionsSQL.Region LIKE '%" + regionName + "%' ORDER BY Alliance ASC, Player ASC, Population DESC";
                 db.each(sql, function (err, row) {
                     if (err) {
                         console.log(err);
