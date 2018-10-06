@@ -7,6 +7,7 @@ var scrape = require('website-scraper');
 
 // controllers to keep this file decluttered
 var sql_controller = require('../database/sqlController');
+var activity_controller = require('../controllers/activityController');
 var travel_controller = require('../controllers/travelController');
 var inactive_controller = require('../controllers/inactiveController');
 
@@ -28,7 +29,7 @@ router.get('/regions/history', sql_controller.regions_history_get);
 router.get('/regions/history/extend', sql_controller.regions_history_extend);
 
 // Get regions activity page
-router.get('/regions/activity', sql_controller.regions_activity_get);
+router.get('/regions/activity', activity_controller.population_activity_get);
 
 // Get region alliance control info
 router.get('/region/:id/detail', sql_controller.regions_detail_get);
