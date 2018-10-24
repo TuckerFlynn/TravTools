@@ -9,7 +9,11 @@ block content
       hr
   div.row
     div.col-sm-12
-      p Breakdown of changes to region population and control
+      p Breakdown of changes to region population and control. 
+        ul
+          li Green rows indicate the region leader has changed in the past week.
+          li Yellow rows indicate population has changed by more than 50% in the past week.
+          li Red rows indicate the region leader has changed and the pop has changed by more than 50%.
 
   table.table.table-striped.table-bordered
     thead.thead-dark
@@ -23,7 +27,23 @@ block content
     tbody
       if (data)
         each val, index in data
-          tr
+          - var status = 0;
+          - var disp = "";
+          if ( data[index].PrevLeader !== data[index].Leader ) 
+            - status += 1;
+          if ( data[index].Week !== 0 && data[index].Current != 0 )
+            - var w = data[index].Week, c = data[index].Current;
+            - var delta = (c - w)/w;
+            if ( delta >= 0.5 )
+              - status += 2;
+          if (status == 1)
+            - disp = "table-success"
+          if (status == 2)
+            - disp = "table-warning"
+          if (status == 3)
+            - disp = "table-danger"
+          
+          tr(class=disp)
             td
               a(href="../region/" + data[index].Region) #{data[index].Region}
             td= data[index].PrevLeader
