@@ -46,6 +46,9 @@ router.get('/region/:id', sql_controller.region_id_get);
 router.get('/inactive', inactive_controller.inactive_get);
 router.post('/inactive', inactive_controller.inactive_post);
 
+router.get('/adv_inactive', inactive_controller.adv_inactive_get);
+router.post('/adv_inactive', inactive_controller.adv_inactive_post);
+
 /* 
     TRAVEL SPEED
 */
