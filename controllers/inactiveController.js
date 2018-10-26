@@ -225,7 +225,7 @@ exports.adv_inactive_post = function (req, res) {
         rallyInput[i] = tempArray[0];
     }
 
-    // console.log(rallyInput); 
+    console.log(rallyInput); 
 
     var db = new sqlite3.Database('');
 

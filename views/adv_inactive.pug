@@ -66,7 +66,7 @@ block content
             each val, index in output
               - var disp = '';
               each val, indexB in currentFarm
-                if (currentFarm[indexB] == output[index].Village)
+                if (output[index].Village.includes(currentFarm[indexB]))
                   - disp = 'table-success'
               tr(class=disp)
                 td= output[index].Player
