@@ -160,3 +160,4 @@ events.js:183
 
 Error: ENOENT: no such file or directory, open '/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/mapFiles/m2018_11_29/map.txt'
 Successfully created database m2018_11_29 at 9:36:50
+Successfully created database m2018_11_30 at 3:1:15
