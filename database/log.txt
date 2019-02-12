@@ -204,3 +204,9 @@ Successfully created database m2019_1_7 at 2:5:15
 Successfully created database m2019_1_8 at 2:5:10
 Successfully created database m2019_1_9 at 2:5:14
 Successfully created database m2019_1_10 at 8:32:32
+events.js:183
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: ENOENT: no such file or directory, open '/Users/tuckermertens/Documents/Coding/TravTools_PtP/Path_to_Pandora/database/mapFiles/m2019_1_11/map.txt'
+Successfully created database m2019_1_12 at 2:5:22
